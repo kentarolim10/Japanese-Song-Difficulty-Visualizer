@@ -1,7 +1,9 @@
-fastapi                                                     
-uvicorn                                                     
-sqlalchemy                                                  
-psycopg2-binary                                             
-lyricsgenius                                                
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+lyricsgenius
 pydantic
-requests 
+requests
+fugashi
+unidic-lite 
