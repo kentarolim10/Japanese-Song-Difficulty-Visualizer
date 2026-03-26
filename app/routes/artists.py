@@ -14,6 +14,18 @@ GENIUS_TOKEN = os.getenv("GENIUS_TOKEN")
 MAX_SONGS = 50
 
 
+def contains_japanese(text: str) -> bool:
+    """Check if text contains Japanese characters (Hiragana, Katakana, or Kanji)."""
+    if not text:
+        return False
+    for char in text:
+        if ('\u3040' <= char <= '\u309f' or  # Hiragana
+            '\u30a0' <= char <= '\u30ff' or  # Katakana
+            '\u4e00' <= char <= '\u9fff'):   # Kanji
+            return True
+    return False
+
+
 @router.post("/add", response_model=ArtistAddResponse)
 def add_artist(request: ArtistAddRequest, db: Session = Depends(get_db)):
     genius = Genius(GENIUS_TOKEN)
@@ -41,6 +53,10 @@ def add_artist(request: ArtistAddRequest, db: Session = Depends(get_db)):
     # Save songs
     songs_saved = 0
     for song in artist_data.songs:
+        # Skip if lyrics are not Japanese
+        if not contains_japanese(song.lyrics):
+            continue
+
         song_dict = song.to_dict()
         song_id = song_dict['id']
         existing_song = db.query(Song).filter(Song.genius_id == song_id).first()
