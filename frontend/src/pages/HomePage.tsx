@@ -4,6 +4,7 @@ import type { Song, SortField, SortOrder } from "../types";
 import SongList from "../components/SongList";
 import SearchBar from "../components/SearchBar";
 import DifficultyFilter from "../components/DifficultyFilter";
+import AddSongModal from "../components/AddSongModal";
 
 export default function HomePage() {
   const [songs, setSongs] = useState<Song[]>([]);
@@ -15,6 +16,7 @@ export default function HomePage() {
   const [order, setOrder] = useState<SortOrder>("asc");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -99,6 +101,13 @@ export default function HomePage() {
     setOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
+  const handleSongAdded = () => {
+    // Reset and refetch songs
+    setSongs([]);
+    setPage(1);
+    setHasMore(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -128,10 +137,39 @@ export default function HomePage() {
       </div>
 
       {!loading && songs.length === 0 && (
-        <div className="text-center text-gray-500 py-10">
-          No songs found. Try adjusting your search or add some artists first.
+        <div className="text-center py-10">
+          <p className="text-gray-500 mb-4">
+            {debouncedSearch
+              ? `No songs found for "${debouncedSearch}".`
+              : "No songs found. Add some songs to get started."}
+          </p>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Add Song via Genius Link
+          </button>
         </div>
       )}
+
+      <AddSongModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSongAdded={handleSongAdded}
+      />
     </div>
   );
 }

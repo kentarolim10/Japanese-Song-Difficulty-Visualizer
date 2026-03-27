@@ -91,4 +91,18 @@ class PaginatedSongsResponse(BaseModel):
     total: int
     page: int
     page_size: int
-    has_more: bool  
+    has_more: bool
+
+
+# Add song by URL
+class SongAddByUrlRequest(BaseModel):
+    url: str
+
+
+class SongAddByUrlResponse(BaseModel):
+    id: int
+    genius_id: int
+    title: str
+    artist_name: str
+    thumbnail_url: Optional[str] = None
+    message: str

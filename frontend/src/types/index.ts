@@ -66,3 +66,17 @@ export type SortField =
   | "total_words";
 
 export type SortOrder = "asc" | "desc";
+
+// Add song by URL
+export interface AddSongRequest {
+  url: string;
+}
+
+export interface AddSongResponse {
+  id: number;
+  genius_id: number;
+  title: string;
+  artist_name: string;
+  thumbnail_url: string | null;
+  message: string;
+}
