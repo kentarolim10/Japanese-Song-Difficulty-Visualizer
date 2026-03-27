@@ -44,6 +44,7 @@ export interface Song {
   genius_id: number;
   title: string;
   artist_name: string;
+  thumbnail_url: string | null;
   created_at: string;
   analysis: SongAnalysis;
 }

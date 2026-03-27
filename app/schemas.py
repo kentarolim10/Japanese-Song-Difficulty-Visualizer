@@ -62,6 +62,7 @@ class SongResponse(BaseModel):
     id: int
     genius_id: int
     title: str
+    thumbnail_url: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -77,6 +78,7 @@ class SongListItemResponse(BaseModel):
     genius_id: int
     title: str
     artist_name: str
+    thumbnail_url: Optional[str] = None
     created_at: datetime
     analysis: SongAnalysisResponse  # Required - songs without analysis excluded
 

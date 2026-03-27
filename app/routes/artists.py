@@ -49,7 +49,11 @@ def add_artist(request: ArtistAddRequest, db: Session = Depends(get_db)):
     db_artist = db.query(Artist).filter(Artist.genius_id == artist_id).first()
 
     if not db_artist:
-        db_artist = Artist(genius_id=artist_id, name=artist_data.name)
+        db_artist = Artist(
+            genius_id=artist_id,
+            name=artist_data.name,
+            thumbnail_url=artist_dict.get('image_url')
+        )
         db.add(db_artist)
         db.commit()
         db.refresh(db_artist)
@@ -69,7 +73,8 @@ def add_artist(request: ArtistAddRequest, db: Session = Depends(get_db)):
                 genius_id=song_id,
                 artist_id=db_artist.id,
                 title=song.title,
-                lyrics=song.lyrics
+                lyrics=song.lyrics,
+                thumbnail_url=song_dict.get('song_art_image_thumbnail_url')
             )
             db.add(db_song)
             db.flush()  # Get the song ID before creating analysis

@@ -63,7 +63,7 @@ export default function HomePage() {
   // Fetch on page/filter change
   useEffect(() => {
     fetchSongs();
-  }, [page, sortBy, order, debouncedSearch]);
+  }, [page, sortBy, order, debouncedSearch, fetchSongs]);
 
   // Infinite scroll observer
   useEffect(() => {

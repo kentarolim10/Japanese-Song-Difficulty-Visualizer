@@ -72,6 +72,7 @@ def get_songs(
             genius_id=song.genius_id,
             title=song.title,
             artist_name=song.artist.name,
+            thumbnail_url=song.thumbnail_url,
             created_at=song.created_at,
             analysis=SongAnalysisResponse.model_validate(song.analysis),
         )

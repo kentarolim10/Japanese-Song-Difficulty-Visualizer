@@ -72,21 +72,43 @@ export default function SongList({ songs, sortBy }: SongListProps) {
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               {SORT_LABELS[sortBy]}
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              JLPT Breakdown
-            </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {songs.map((song) => (
             <tr key={song.id} className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap">
-                <Link
-                  to={`/song/${song.id}`}
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  {song.title}
-                </Link>
+                <div className="flex items-center gap-3">
+                  {song.thumbnail_url ? (
+                    <img
+                      src={song.thumbnail_url}
+                      alt={song.title}
+                      className="w-10 h-10 rounded object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded bg-gray-200 flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                  <Link
+                    to={`/song/${song.id}`}
+                    className="text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    {song.title}
+                  </Link>
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                 {song.artist_name}
@@ -100,25 +122,6 @@ export default function SongList({ songs, sortBy }: SongListProps) {
                 >
                   {getDifficultyValue(song, sortBy)}
                 </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex gap-1 text-xs">
-                  <span className="px-1.5 py-0.5 bg-green-50 text-green-700 rounded">
-                    N5: {song.analysis.jlpt_n5_count}
-                  </span>
-                  <span className="px-1.5 py-0.5 bg-lime-50 text-lime-700 rounded">
-                    N4: {song.analysis.jlpt_n4_count}
-                  </span>
-                  <span className="px-1.5 py-0.5 bg-yellow-50 text-yellow-700 rounded">
-                    N3: {song.analysis.jlpt_n3_count}
-                  </span>
-                  <span className="px-1.5 py-0.5 bg-orange-50 text-orange-700 rounded">
-                    N2: {song.analysis.jlpt_n2_count}
-                  </span>
-                  <span className="px-1.5 py-0.5 bg-red-50 text-red-700 rounded">
-                    N1: {song.analysis.jlpt_n1_count}
-                  </span>
-                </div>
               </td>
             </tr>
           ))}
