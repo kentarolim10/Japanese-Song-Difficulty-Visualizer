@@ -37,22 +37,20 @@ export default function HomePage() {
   }, [sortBy, order, debouncedSearch]);
 
   // Fetch songs
-  const fetchSongs = useCallback(async () => {
-    if (loading || !hasMore) return;
-
+  const fetchSongs = useCallback(async (currentPage: number) => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await getSongs({
-        page,
+        page: currentPage,
         sortBy,
         order,
         search: debouncedSearch || undefined,
       });
 
       setSongs((prev) =>
-        page === 1 ? response.items : [...prev, ...response.items],
+        currentPage === 1 ? response.items : [...prev, ...response.items],
       );
       setHasMore(response.has_more);
     } catch (err) {
@@ -60,12 +58,24 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [page, sortBy, order, debouncedSearch, loading, hasMore]);
+  }, [sortBy, order, debouncedSearch]);
 
   // Fetch on page/filter change
   useEffect(() => {
-    fetchSongs();
-  }, [page, sortBy, order, debouncedSearch, fetchSongs]);
+    fetchSongs(page);
+  }, [page, fetchSongs]);
+
+  // Track loading and hasMore in refs for observer callback
+  const loadingRef = useRef(loading);
+  const hasMoreRef = useRef(hasMore);
+
+  useEffect(() => {
+    loadingRef.current = loading;
+  }, [loading]);
+
+  useEffect(() => {
+    hasMoreRef.current = hasMore;
+  }, [hasMore]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -75,7 +85,7 @@ export default function HomePage() {
 
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
+        if (entries[0].isIntersecting && hasMoreRef.current && !loadingRef.current) {
           setPage((prev) => prev + 1);
         }
       },
@@ -91,7 +101,7 @@ export default function HomePage() {
         observerRef.current.disconnect();
       }
     };
-  }, [hasMore, loading]);
+  }, []);
 
   const handleSortChange = (newSortBy: SortField) => {
     setSortBy(newSortBy);
