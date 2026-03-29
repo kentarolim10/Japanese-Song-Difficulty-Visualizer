@@ -10,7 +10,6 @@ const SORT_LABELS: Record<SortField, string> = {
   unique_kanji_count: "Unique Kanji",
   total_kanji_count: "Total Kanji",
   lexical_density: "Lexical Density",
-  avg_bunsetsu_length: "Avg Phrase Length",
   jlpt_n1_count: "JLPT N1 Words",
   total_words: "Total Words",
 };
@@ -38,9 +37,6 @@ function getDifficultyColor(song: Song, sortBy: SortField): string {
       break;
     case "lexical_density":
       normalized = value;
-      break;
-    case "avg_bunsetsu_length":
-      normalized = Math.min(value / 10, 1);
       break;
     case "jlpt_n1_count":
       normalized = Math.min(value / 50, 1);

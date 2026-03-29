@@ -24,7 +24,6 @@ export interface SongAnalysis {
 
   // Bunsetsu
   total_bunsetsu_count: number;
-  avg_bunsetsu_length: number;
   max_bunsetsu_length: number;
   min_bunsetsu_length: number;
 
@@ -43,6 +42,7 @@ export interface Song {
   id: number;
   genius_id: number;
   title: string;
+  artist_id: number;
   artist_name: string;
   thumbnail_url: string | null;
   created_at: string;
@@ -61,7 +61,6 @@ export type SortField =
   | "unique_kanji_count"
   | "total_kanji_count"
   | "lexical_density"
-  | "avg_bunsetsu_length"
   | "jlpt_n1_count"
   | "total_words";
 
@@ -79,4 +78,22 @@ export interface AddSongResponse {
   artist_name: string;
   thumbnail_url: string | null;
   message: string;
+}
+
+// Stats
+export interface SongAverages {
+  unique_kanji_count: number;
+  total_kanji_count: number;
+  lexical_density: number;
+  total_words: number;
+}
+
+export interface ArtistAverages {
+  artist_id: number;
+  artist_name: string;
+  song_count: number;
+  unique_kanji_count: number | null;
+  total_kanji_count: number | null;
+  lexical_density: number | null;
+  total_words: number | null;
 }

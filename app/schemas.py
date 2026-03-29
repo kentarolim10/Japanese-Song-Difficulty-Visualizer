@@ -40,7 +40,6 @@ class SongAnalysisResponse(BaseModel):
 
     # Bunsetsu
     total_bunsetsu_count: int
-    avg_bunsetsu_length: float
     max_bunsetsu_length: int
     min_bunsetsu_length: int
 
@@ -77,6 +76,7 @@ class SongListItemResponse(BaseModel):
     id: int
     genius_id: int
     title: str
+    artist_id: int
     artist_name: str
     thumbnail_url: Optional[str] = None
     created_at: datetime
@@ -106,3 +106,21 @@ class SongAddByUrlResponse(BaseModel):
     artist_name: str
     thumbnail_url: Optional[str] = None
     message: str
+
+
+# Stats
+class SongAveragesResponse(BaseModel):
+    unique_kanji_count: float
+    total_kanji_count: float
+    lexical_density: float
+    total_words: float
+
+
+class ArtistAveragesResponse(BaseModel):
+    artist_id: int
+    artist_name: str
+    song_count: int
+    unique_kanji_count: Optional[float] = None
+    total_kanji_count: Optional[float] = None
+    lexical_density: Optional[float] = None
+    total_words: Optional[float] = None

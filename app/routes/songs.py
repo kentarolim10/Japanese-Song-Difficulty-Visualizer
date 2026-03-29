@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from typing import Optional
 from lyricsgenius import Genius
 
@@ -17,6 +17,8 @@ from app.schemas import (
     SongAnalysisResponse,
     SongAddByUrlRequest,
     SongAddByUrlResponse,
+    SongAveragesResponse,
+    ArtistAveragesResponse,
 )
 from app.services.analyzer import JapaneseSongAnalyzer
 
@@ -26,7 +28,6 @@ VALID_SORT_FIELDS = {
     "unique_kanji_count",
     "total_kanji_count",
     "lexical_density",
-    "avg_bunsetsu_length",
     "jlpt_n1_count",
     "total_words",
 }
@@ -84,6 +85,7 @@ def get_songs(
             id=song.id,
             genius_id=song.genius_id,
             title=song.title,
+            artist_id=song.artist.id,
             artist_name=song.artist.name,
             thumbnail_url=song.thumbnail_url,
             created_at=song.created_at,
@@ -100,6 +102,98 @@ def get_songs(
         page=page,
         page_size=page_size,
         has_more=has_more,
+    )
+
+
+@router.get("/stats/averages", response_model=SongAveragesResponse)
+def get_song_averages(db: Session = Depends(get_db)):
+    """Get average values for key metrics across all songs."""
+    result = db.query(
+        func.avg(SongAnalysis.unique_kanji_count).label("unique_kanji_count"),
+        func.avg(SongAnalysis.total_kanji_count).label("total_kanji_count"),
+        func.avg(SongAnalysis.lexical_density).label("lexical_density"),
+        func.avg(SongAnalysis.total_words).label("total_words"),
+    ).first()
+
+    return SongAveragesResponse(
+        unique_kanji_count=result.unique_kanji_count or 0,
+        total_kanji_count=result.total_kanji_count or 0,
+        lexical_density=result.lexical_density or 0,
+        total_words=result.total_words or 0,
+    )
+
+
+@router.get("/stats/artist/{artist_id}", response_model=ArtistAveragesResponse)
+def get_artist_averages(artist_id: int, db: Session = Depends(get_db)):
+    """Get average values for an artist's songs. Returns null averages if < 2 songs."""
+    # Get artist info
+    artist = db.query(Artist).filter(Artist.id == artist_id).first()
+    if not artist:
+        raise HTTPException(status_code=404, detail="Artist not found")
+
+    # Count analyzed songs and get averages
+    result = (
+        db.query(
+            func.count(SongAnalysis.id).label("song_count"),
+            func.avg(SongAnalysis.unique_kanji_count).label("unique_kanji_count"),
+            func.avg(SongAnalysis.total_kanji_count).label("total_kanji_count"),
+            func.avg(SongAnalysis.lexical_density).label("lexical_density"),
+            func.avg(SongAnalysis.total_words).label("total_words"),
+        )
+        .join(Song, SongAnalysis.song_id == Song.id)
+        .filter(Song.artist_id == artist_id)
+        .first()
+    )
+
+    song_count = result.song_count or 0
+
+    # Only return averages if artist has 2+ songs
+    if song_count >= 2:
+        return ArtistAveragesResponse(
+            artist_id=artist_id,
+            artist_name=artist.name,
+            song_count=song_count,
+            unique_kanji_count=result.unique_kanji_count,
+            total_kanji_count=result.total_kanji_count,
+            lexical_density=result.lexical_density,
+            total_words=result.total_words,
+        )
+    else:
+        return ArtistAveragesResponse(
+            artist_id=artist_id,
+            artist_name=artist.name,
+            song_count=song_count,
+            unique_kanji_count=None,
+            total_kanji_count=None,
+            lexical_density=None,
+            total_words=None,
+        )
+
+
+@router.get("/{song_id}", response_model=SongListItemResponse)
+def get_song(song_id: int, db: Session = Depends(get_db)):
+    """Get a single song by ID with its analysis."""
+    song = (
+        db.query(Song)
+        .join(SongAnalysis)
+        .join(Artist)
+        .options(joinedload(Song.analysis), joinedload(Song.artist))
+        .filter(Song.id == song_id)
+        .first()
+    )
+
+    if not song:
+        raise HTTPException(status_code=404, detail="Song not found")
+
+    return SongListItemResponse(
+        id=song.id,
+        genius_id=song.genius_id,
+        title=song.title,
+        artist_id=song.artist.id,
+        artist_name=song.artist.name,
+        thumbnail_url=song.thumbnail_url,
+        created_at=song.created_at,
+        analysis=SongAnalysisResponse.model_validate(song.analysis),
     )
 
 

@@ -3,6 +3,9 @@ import type {
   SortField,
   SortOrder,
   AddSongResponse,
+  Song,
+  SongAverages,
+  ArtistAverages,
 } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -54,6 +57,36 @@ export async function addSongByUrl(url: string): Promise<AddSongResponse> {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.detail || `Failed to add song: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getSong(id: number): Promise<Song> {
+  const response = await fetch(`${API_BASE_URL}/songs/${id}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch song: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getSongAverages(): Promise<SongAverages> {
+  const response = await fetch(`${API_BASE_URL}/songs/stats/averages`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch averages: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function getArtistAverages(artistId: number): Promise<ArtistAverages> {
+  const response = await fetch(`${API_BASE_URL}/songs/stats/artist/${artistId}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch artist averages: ${response.statusText}`);
   }
 
   return response.json();

@@ -11,7 +11,6 @@ const SORT_OPTIONS: { value: SortField; label: string }[] = [
   { value: "unique_kanji_count", label: "Unique Kanji" },
   { value: "total_kanji_count", label: "Total Kanji" },
   { value: "lexical_density", label: "Lexical Density" },
-  { value: "avg_bunsetsu_length", label: "Avg Phrase Length" },
   { value: "jlpt_n1_count", label: "JLPT N1 Words" },
   { value: "total_words", label: "Total Words" },
 ];
