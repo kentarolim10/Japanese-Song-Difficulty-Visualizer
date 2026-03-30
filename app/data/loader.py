@@ -59,3 +59,27 @@ class KanjiGrades:
     def get_grade(self, kanji: str) -> Optional[int]:
         """Get grade level for a kanji (1-6 = elementary, 8 = secondary)."""
         return self._grades.get(kanji)
+
+
+class JMnedict:
+    """Singleton loader for JMnedict (Japanese proper nouns)."""
+    _instance = None
+    _names: set = set()
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._load_data()
+        return cls._instance
+
+    def _load_data(self):
+        """Load JMnedict names data."""
+        file_path = DATA_DIR / "jmnedict" / "names.json"
+        if file_path.exists():
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                self._names = set(data)
+
+    def is_name(self, word: str) -> bool:
+        """Check if a word is in JMnedict."""
+        return word in self._names

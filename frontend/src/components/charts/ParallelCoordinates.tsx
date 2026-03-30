@@ -17,7 +17,11 @@ interface Dimension {
 const DIMENSIONS: Dimension[] = [
   { key: "unique_kanji_count", label: "Unique Kanji", domain: [0, 150] },
   { key: "total_kanji_count", label: "Total Kanji", domain: [0, 300] },
-  { key: "lexical_density", label: "Lexical Density", domain: [0, 1] },
+  {
+    key: "lexical_density",
+    label: "Unique / Total words",
+    domain: [0, 1],
+  },
   { key: "total_words", label: "Total Words", domain: [0, 600] },
 ];
 
@@ -238,7 +242,10 @@ export default function ParallelCoordinates({
     const legendOffset = showArtistLine ? -130 : -80;
     const legend = svg
       .append("g")
-      .attr("transform", `translate(${width / 2 + legendOffset}, ${height - 15})`);
+      .attr(
+        "transform",
+        `translate(${width / 2 + legendOffset}, ${height - 15})`,
+      );
 
     // Current song legend
     let xOffset = 0;

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { getSong, getSongAverages, getArtistAverages } from "../api/songs";
 import type { Song, SongAverages, ArtistAverages } from "../types";
 import ParallelCoordinates from "../components/charts/ParallelCoordinates";
+import WordListSection from "../components/WordListSection";
 
 export default function SongDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -132,12 +133,19 @@ export default function SongDashboard() {
         </div>
       </div>
 
-      {/* Parallel Coordinates Chart */}
-      <ParallelCoordinates
-        song={song.analysis}
-        averages={averages}
-        artistAverages={artistAverages}
-      />
+      {/* Charts Section - Side by Side Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <ParallelCoordinates
+            song={song.analysis}
+            averages={averages}
+            artistAverages={artistAverages}
+          />
+        </div>
+        <div className="lg:col-span-1">
+          <WordListSection analysis={song.analysis} />
+        </div>
+      </div>
     </div>
   );
 }

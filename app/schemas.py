@@ -51,6 +51,11 @@ class SongAnalysisResponse(BaseModel):
     # Word frequencies
     word_frequencies: Optional[Dict[str, int]]
 
+    # Special word categories
+    onomatopoeia: Optional[List[str]] = None
+    proper_nouns: Optional[List[str]] = None
+    archaic_words: Optional[List[str]] = None
+
     analyzed_at: datetime
 
     class Config:

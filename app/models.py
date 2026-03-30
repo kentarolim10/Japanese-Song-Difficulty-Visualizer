@@ -71,6 +71,11 @@ class SongAnalysis(Base):
     # Word Frequencies (stored as JSON)
     word_frequencies = Column(JSON)
 
+    # Special Word Categories (stored as JSON lists)
+    onomatopoeia = Column(JSON)
+    proper_nouns = Column(JSON)
+    archaic_words = Column(JSON)
+
     # Timestamp
     analyzed_at = Column(DateTime, server_default=func.now())
 

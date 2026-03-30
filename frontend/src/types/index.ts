@@ -35,6 +35,11 @@ export interface SongAnalysis {
   // Word frequencies
   word_frequencies: Record<string, number>;
 
+  // Special word categories
+  onomatopoeia?: string[];
+  proper_nouns?: string[];
+  archaic_words?: string[];
+
   analyzed_at: string;
 }
 
