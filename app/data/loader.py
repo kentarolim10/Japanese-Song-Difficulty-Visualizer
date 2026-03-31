@@ -83,3 +83,26 @@ class JMnedict:
     def is_name(self, word: str) -> bool:
         """Check if a word is in JMnedict."""
         return word in self._names
+
+
+class JMdict:
+    """Singleton loader for JMdict (Japanese-English dictionary)."""
+    _instance = None
+    _words: Dict[str, Dict[str, str]] = {}  # word -> {"reading": "...", "definition": "..."}
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._load_data()
+        return cls._instance
+
+    def _load_data(self):
+        """Load JMdict words data."""
+        file_path = DATA_DIR / "jmdict" / "words.json"
+        if file_path.exists():
+            with open(file_path, "r", encoding="utf-8") as f:
+                self._words = json.load(f)
+
+    def get_word_info(self, word: str) -> Optional[Dict[str, str]]:
+        """Get reading and definition for a word."""
+        return self._words.get(word)

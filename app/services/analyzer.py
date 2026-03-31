@@ -81,8 +81,8 @@ class JapaneseSongAnalyzer:
         # Particles (助詞) and auxiliary verbs (助動詞) typically end bunsetsu
         return pos in ('助詞', '助動詞', '記号', '補助記号')
 
-    def _analyze_jlpt_vocabulary(self, tokens: List) -> Dict[str, int]:
-        """Count words by JLPT level using lemma (dictionary form)."""
+    def _analyze_jlpt_vocabulary(self, tokens: List) -> Dict:
+        """Count words by JLPT level and track unique words found per level."""
         counts = {
             "jlpt_n5_count": 0,
             "jlpt_n4_count": 0,
@@ -90,6 +90,15 @@ class JapaneseSongAnalyzer:
             "jlpt_n2_count": 0,
             "jlpt_n1_count": 0,
             "jlpt_unknown_count": 0,
+        }
+
+        # Track unique words per level
+        words_per_level = {
+            "N5": set(),
+            "N4": set(),
+            "N3": set(),
+            "N2": set(),
+            "N1": set(),
         }
 
         for token in tokens:
@@ -103,10 +112,20 @@ class JapaneseSongAnalyzer:
 
             if level:
                 counts[f"jlpt_n{level}_count"] += 1
+                words_per_level[f"N{level}"].add(lemma)
             else:
                 counts["jlpt_unknown_count"] += 1
 
-        return counts
+        # Convert sets to sorted lists
+        jlpt_words = {
+            level: sorted(list(words))
+            for level, words in words_per_level.items()
+        }
+
+        return {
+            **counts,
+            "jlpt_words": jlpt_words,
+        }
 
     def _analyze_kanji(self, text: str) -> Dict[str, int]:
         """Analyze kanji usage and complexity."""

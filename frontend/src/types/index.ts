@@ -40,8 +40,23 @@ export interface SongAnalysis {
   proper_nouns?: string[];
   archaic_words?: string[];
 
+  // JLPT words per level (legacy - just strings)
+  jlpt_words?: Record<string, string[]>;
+  // JLPT vocab with definitions (enriched)
+  jlpt_vocab?: Record<string, VocabItem[]>;
+
   analyzed_at: string;
 }
+
+// Vocab item with optional reading and definition
+export interface VocabItem {
+  word: string;
+  reading?: string;
+  definition?: string;
+}
+
+// Legacy alias for backward compatibility
+export type VocabInfo = VocabItem;
 
 export interface Song {
   id: number;

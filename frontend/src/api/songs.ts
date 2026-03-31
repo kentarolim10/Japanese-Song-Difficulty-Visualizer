@@ -91,3 +91,4 @@ export async function getArtistAverages(artistId: number): Promise<ArtistAverage
 
   return response.json();
 }
+

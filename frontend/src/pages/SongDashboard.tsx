@@ -4,6 +4,7 @@ import { getSong, getSongAverages, getArtistAverages } from "../api/songs";
 import type { Song, SongAverages, ArtistAverages } from "../types";
 import ParallelCoordinates from "../components/charts/ParallelCoordinates";
 import WordListSection from "../components/WordListSection";
+import JLPTSection from "../components/JLPTSection";
 
 export default function SongDashboard() {
   const { id } = useParams<{ id: string }>();
@@ -146,6 +147,9 @@ export default function SongDashboard() {
           <WordListSection analysis={song.analysis} />
         </div>
       </div>
+
+      {/* JLPT Vocabulary Section */}
+      <JLPTSection analysis={song.analysis} />
     </div>
   );
 }

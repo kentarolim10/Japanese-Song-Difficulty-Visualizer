@@ -17,6 +17,7 @@ def migrate():
         ("onomatopoeia", "JSONB"),
         ("proper_nouns", "JSONB"),
         ("archaic_words", "JSONB"),
+        ("jlpt_words", "JSONB"),
     ]
 
     with engine.connect() as conn:

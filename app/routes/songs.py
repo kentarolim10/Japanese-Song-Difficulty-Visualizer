@@ -19,10 +19,51 @@ from app.schemas import (
     SongAddByUrlResponse,
     SongAveragesResponse,
     ArtistAveragesResponse,
+    VocabItem,
 )
 from app.services.analyzer import JapaneseSongAnalyzer
+from app.data.loader import JMdict
 
 router = APIRouter()
+
+# Singleton JMdict instance for vocab lookups
+_jmdict: Optional[JMdict] = None
+
+
+def get_jmdict() -> JMdict:
+    """Get or create singleton JMdict instance."""
+    global _jmdict
+    if _jmdict is None:
+        _jmdict = JMdict()
+    return _jmdict
+
+
+def enrich_jlpt_words(jlpt_words: Optional[dict]) -> Optional[dict]:
+    """Enrich jlpt_words with readings and definitions from JMdict."""
+    if not jlpt_words:
+        return None
+
+    jmdict = get_jmdict()
+    result = {}
+
+    for level, words in jlpt_words.items():
+        result[level] = []
+        for word in words:
+            info = jmdict.get_word_info(word)
+            result[level].append(VocabItem(
+                word=word,
+                reading=info.get("reading") if info else None,
+                definition=info.get("definition") if info else None,
+            ))
+
+    return result
+
+
+def build_analysis_response(analysis: SongAnalysis) -> SongAnalysisResponse:
+    """Build SongAnalysisResponse with enriched jlpt_vocab."""
+    response = SongAnalysisResponse.model_validate(analysis)
+    response.jlpt_vocab = enrich_jlpt_words(analysis.jlpt_words)
+    return response
 
 VALID_SORT_FIELDS = {
     "unique_kanji_count",
@@ -89,7 +130,7 @@ def get_songs(
             artist_name=song.artist.name,
             thumbnail_url=song.thumbnail_url,
             created_at=song.created_at,
-            analysis=SongAnalysisResponse.model_validate(song.analysis),
+            analysis=build_analysis_response(song.analysis),
         )
         for song in songs
     ]
@@ -193,7 +234,7 @@ def get_song(song_id: int, db: Session = Depends(get_db)):
         artist_name=song.artist.name,
         thumbnail_url=song.thumbnail_url,
         created_at=song.created_at,
-        analysis=SongAnalysisResponse.model_validate(song.analysis),
+        analysis=build_analysis_response(song.analysis),
     )
 
 

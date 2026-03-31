@@ -45,6 +45,9 @@ class SongAnalysis(Base):
     jlpt_n1_count = Column(Integer, default=0)
     jlpt_unknown_count = Column(Integer, default=0)
 
+    # JLPT Words per level (stored as JSON: {"N5": [...], "N4": [...], ...})
+    jlpt_words = Column(JSON)
+
     # Kanji Complexity
     total_kanji_count = Column(Integer, default=0)
     unique_kanji_count = Column(Integer, default=0)

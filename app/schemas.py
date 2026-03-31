@@ -26,6 +26,11 @@ class SongAnalysisResponse(BaseModel):
     jlpt_n1_count: int
     jlpt_unknown_count: int
 
+    # JLPT Words per level (legacy - just word strings)
+    jlpt_words: Optional[Dict[str, List[str]]] = None
+    # JLPT Vocab with definitions (enriched at runtime)
+    jlpt_vocab: Optional[Dict[str, List["VocabItem"]]] = None
+
     # Kanji
     total_kanji_count: int
     unique_kanji_count: int
@@ -129,3 +134,14 @@ class ArtistAveragesResponse(BaseModel):
     total_kanji_count: Optional[float] = None
     lexical_density: Optional[float] = None
     total_words: Optional[float] = None
+
+
+# Vocab lookup
+class VocabItem(BaseModel):
+    word: str
+    reading: Optional[str] = None
+    definition: Optional[str] = None
+
+
+# Legacy response for backward compatibility
+VocabInfoResponse = VocabItem
