@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import func
 from typing import List
 
 from app.database import get_db
@@ -63,7 +64,7 @@ def reanalyze_song(song_id: int, db: Session = Depends(get_db)):
     if existing:
         for key, value in analysis_data.items():
             setattr(existing, key, value)
-        existing.analyzed_at = func.now()
+        existing.analyzed_at = datetime.utcnow()
         db.commit()
         db.refresh(existing)
         return existing

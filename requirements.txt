@@ -6,4 +6,4 @@ lyricsgenius
 pydantic
 requests
 fugashi
-unidic-lite 
+unidic

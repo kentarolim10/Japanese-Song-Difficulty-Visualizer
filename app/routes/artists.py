@@ -7,6 +7,7 @@ from app.database import get_db
 from app.models import Artist, Song, SongAnalysis
 from app.schemas import ArtistAddRequest, ArtistAddResponse
 from app.services.analyzer import JapaneseSongAnalyzer
+from app.utils import contains_japanese
 
 # Initialize analyzer (singleton pattern for data loading)
 analyzer = JapaneseSongAnalyzer()
@@ -16,18 +17,6 @@ router = APIRouter()
 GENIUS_TOKEN = os.getenv("GENIUS_TOKEN")
 
 MAX_SONGS = 50
-
-
-def contains_japanese(text: str) -> bool:
-    """Check if text contains Japanese characters (Hiragana, Katakana, or Kanji)."""
-    if not text:
-        return False
-    for char in text:
-        if ('\u3040' <= char <= '\u309f' or  # Hiragana
-            '\u30a0' <= char <= '\u30ff' or  # Katakana
-            '\u4e00' <= char <= '\u9fff'):   # Kanji
-            return True
-    return False
 
 
 @router.post("/add", response_model=ArtistAddResponse)
