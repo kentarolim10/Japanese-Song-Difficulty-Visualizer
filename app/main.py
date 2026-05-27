@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from app.database import engine, Base
 from app.routes import artists, analysis, songs
@@ -19,6 +20,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def startup_check():
+    """Validate required environment variables at startup."""
+    if not os.getenv("GENIUS_TOKEN"):
+        app.logger.warning(
+            "GENIUS_TOKEN is not set. Song fetching from Genius will fail."
+        )
 
 # Register routes
 app.include_router(artists.router, prefix="/artists", tags=["artists"])

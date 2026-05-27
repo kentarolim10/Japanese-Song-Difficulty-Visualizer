@@ -23,6 +23,7 @@ from app.schemas import (
 )
 from app.services.analyzer import JapaneseSongAnalyzer
 from app.data.loader import JMdict
+from app.utils import contains_japanese
 
 router = APIRouter()
 
@@ -264,20 +265,6 @@ def validate_genius_url(url: str) -> str:
         raise HTTPException(status_code=400, detail="Invalid Genius URL - this is not a song page")
 
     return path
-
-
-def contains_japanese(text: str) -> bool:
-    """Check if text contains Japanese characters (Hiragana, Katakana, or Kanji)."""
-    if not text:
-        return False
-    for char in text:
-        if (
-            "\u3040" <= char <= "\u309f"  # Hiragana
-            or "\u30a0" <= char <= "\u30ff"  # Katakana
-            or "\u4e00" <= char <= "\u9fff"  # Kanji
-        ):
-            return True
-    return False
 
 
 class SongData:

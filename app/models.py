@@ -9,7 +9,7 @@ class Artist(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     genius_id = Column(Integer, unique=True, index=True)
-    name = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False, index=True)
     thumbnail_url = Column(String(500), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 
@@ -21,8 +21,8 @@ class Song(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     genius_id = Column(Integer, unique=True, index=True)
-    artist_id = Column(Integer, ForeignKey("artists.id"), nullable=False)
-    title = Column(String(255), nullable=False)
+    artist_id = Column(Integer, ForeignKey("artists.id"), nullable=False, index=True)
+    title = Column(String(255), nullable=False, index=True)
     lyrics = Column(Text)
     thumbnail_url = Column(String(500), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
@@ -35,7 +35,7 @@ class SongAnalysis(Base):
     __tablename__ = "song_analyses"
 
     id = Column(Integer, primary_key=True, index=True)
-    song_id = Column(Integer, ForeignKey("songs.id"), unique=True, nullable=False)
+    song_id = Column(Integer, ForeignKey("songs.id"), unique=True, nullable=False, index=True)
 
     # JLPT Vocabulary Counts
     jlpt_n5_count = Column(Integer, default=0)
