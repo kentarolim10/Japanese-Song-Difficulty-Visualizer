@@ -1,3 +1,7 @@
+import logging
+import os
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from app.database import engine, Base
 from app.routes import artists, analysis, songs
@@ -6,7 +10,17 @@ from fastapi.middleware.cors import CORSMiddleware
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Japanese Song Difficulty API")
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if not os.getenv("GENIUS_TOKEN"):
+        logger.warning("GENIUS_TOKEN is not set. Adding artists/songs via Genius will fail.")
+    yield
+
+
+app = FastAPI(title="Japanese Song Difficulty API", lifespan=lifespan)
 
 origins = [
     "http://localhost:5173"
