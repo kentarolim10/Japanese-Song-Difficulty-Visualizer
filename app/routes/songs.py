@@ -11,6 +11,7 @@ from lyricsgenius import Genius
 
 from app.database import get_db
 from app.models import Song, SongAnalysis, Artist
+from app.utils import contains_japanese
 from app.schemas import (
     PaginatedSongsResponse,
     SongListItemResponse,
@@ -265,19 +266,6 @@ def validate_genius_url(url: str) -> str:
 
     return path
 
-
-def contains_japanese(text: str) -> bool:
-    """Check if text contains Japanese characters (Hiragana, Katakana, or Kanji)."""
-    if not text:
-        return False
-    for char in text:
-        if (
-            "\u3040" <= char <= "\u309f"  # Hiragana
-            or "\u30a0" <= char <= "\u30ff"  # Katakana
-            or "\u4e00" <= char <= "\u9fff"  # Kanji
-        ):
-            return True
-    return False
 
 
 class SongData:
