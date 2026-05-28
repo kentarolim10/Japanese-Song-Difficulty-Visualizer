@@ -29,9 +29,12 @@ export default function SongDashboard() {
         setSong(songData);
         setAverages(avgData);
 
-        // Fetch artist averages after we have the song
-        const artistAvgData = await getArtistAverages(songData.artist_id);
-        setArtistAverages(artistAvgData);
+        try {
+          const artistAvgData = await getArtistAverages(songData.artist_id);
+          setArtistAverages(artistAvgData);
+        } catch (err) {
+          console.warn("Failed to fetch artist averages:", err);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load song");
       } finally {
