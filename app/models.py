@@ -21,7 +21,7 @@ class Song(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     genius_id = Column(Integer, unique=True, index=True)
-    artist_id = Column(Integer, ForeignKey("artists.id"), nullable=False)
+    artist_id = Column(Integer, ForeignKey("artists.id"), nullable=False, index=True)
     title = Column(String(255), nullable=False)
     lyrics = Column(Text)
     thumbnail_url = Column(String(500), nullable=True)
